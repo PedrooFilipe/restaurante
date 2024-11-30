@@ -1,0 +1,36 @@
+@using shop.web.Entities
+@using shop.web.ModelView
+@model AddItemToTableViewModel;
+@{
+    ViewData["Title"] = "Produtos";
+}
+
+@{
+    var orders = ViewData["orders"] as List<OrderItemViewModel>;
+    if (orders == null || orders.Count == 0)
+    {
+        <div>Nenhum item adicionado a mesa. </div>
+    }
+    else
+    {
+        foreach (OrderItemViewModel item in orders)
+        {
+            <div class="flex flex-column hover:cursor-pointer bg-slate-300 items-center w-full rounded-md pb-2 md:w-[30%] lg:w-[23.5%]">
+
+                    <div>
+                        <img width="100px" src="/img/@item.ItemThumb" />
+                    </div>
+                    <div>
+                        @item.ItemDescription
+                    </div>
+
+                    <div class="flex justify-between">
+                        <div>
+                            R$ @((item.ItemPrice / 100).ToString("F"))
+                        </div>
+                    </div>
+            </div>
+        }
+
+    }
+}

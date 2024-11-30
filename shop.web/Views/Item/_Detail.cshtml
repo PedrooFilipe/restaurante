@@ -1,11 +1,13 @@
 @using shop.web.Entities
-@model List<shop.web.Entities.Item>;
+@using shop.web.ModelView
+@* @model AddItemToTableViewModel; *@
+@model List<Item>;
 @{
     ViewData["Title"] = "Produtos";
 }
 
 @{
-    if(Model == null || Model.Count == 0)
+    if (Model == null || Model.Count == 0)
     {
         <div>Nenhum item cadastrado. </div>
     }
@@ -13,7 +15,7 @@
     {
         foreach (Item item in Model)
         {
-            <div onclick="teste(@item.Id)" class="flex flex-column hover:cursor-pointer bg-slate-300 items-center w-full rounded-md pb-2 md:w-[30%] lg:w-[23.5%]">
+            <div class="flex flex-column hover:cursor-pointer bg-slate-300 items-center w-full rounded-md pb-2 md:w-[30%] lg:w-[23.5%]" onclick="openModal(@item.Id, @item.Price, '@item.Thumb', '@item.Description')">
 
                     <div>
                         <img width="100px" src="~/img/@item.Thumb" />
@@ -26,15 +28,6 @@
                         <div>
                             R$ @((item.Price / 100).ToString("F"))
                         </div>
-                    </div>
-
-                    <div>
-                        <button class="bg-red-400 hover:bg-red-500 text-white font-bold px-4 rounded-md">-</button>
-                        <span class="mx-4">0</span>
-                        <button class="bg-blue-400 hover:bg-blue-500 text-white font-bold px-4 rounded-md">+</button>
-                    </div>
-                    <div class="mt-2">
-                        <button class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 rounded-md">Adicionar</button>
                     </div>
             </div>
         }

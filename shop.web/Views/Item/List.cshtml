@@ -1,11 +1,15 @@
 @using shop.web.Entities
-@model List<shop.web.Entities.Item>;
+@using shop.web.ModelView
+@model AddItemToTableViewModel;
 @{
     ViewData["Title"] = "Produtos";
 }
 
 <div class="flex justify-between mb-4 ml-1 mr-4">
-    <button asp-action="Table/List" class="bg-blue-400 hover:bg-blue-500 text-white font-bold p-2 rounded-md">Voltar</button>
+    <button class="bg-blue-400 hover:bg-blue-500 text-white font-bold p-2 rounded-md">
+        <a asp-controller="Table" asp-action="List"> Voltar </a>
+
+    </button>
 
     <div class="flex gap-2">
         <input id="description" class="rounded-md border px-2" type="text" placeholder="Pesquisar" />
@@ -14,18 +18,59 @@
 </div>
 
 
-<div>
+@* <div>
 
        Mesa 01 - Valor Atual: R$ 200,00 - Hora de Abertura: 21:00
 
-</div>
+</div> *@
 
 
 <div id="details" class="flex sm:flex-column gap-3 md:flex-wrap md:ml-5">
 
-    <partial name="~/Views/Item/_Detail.cshtml" for="@Model"/>
+    <input id="tableId" type="hidden" asp-for="@Model.TableId" />
+
+    <partial name="~/Views/Item/_Detail.cshtml" for="@Model.Items"/>
 
 </div>
+
+
+    <dialog  id="item-modal" class="rounded-md md:min-w-[40%] lg>min-w-[20%]">
+        <div class="flex flex-column p-3">
+            <button onclick="closeModal()"> Close</button>
+
+            <div class="flex flex-column items-center">
+                <img id="modal-img" width="70px" />
+                <span id="modal-description"></span>
+
+            </div>
+
+            <div class="flex flex-column mt-2">
+                <label class="mx-2" for="observations">Observações:</label>
+                <textarea class="border rounded-md mx-2" id="observations" rows="4" cols="30"></textarea>
+            </div>
+
+            <div class="flex justify-center mt-2">
+                <button class="bg-red-400 hover:bg-red-500 text-white font-bold px-3 rounded-md" onclick="changeModalQuantity('subtract')">-</button>
+                <input id="modal-quantity" class="w-[20px] text-center"></input>
+                <button class="bg-blue-400 hover:bg-blue-500 text-white font-bold px-3 rounded-md" onclick="changeModalQuantity('add')">+</button>
+            </div>
+
+
+            <button class="mt-2" onclick="adicionarPedido()">
+                Adicionar
+            </button>
+        </div>
+
+    </dialog>
+
+
+    @* <dialog> *@
+
+        <div id="resume-container">
+            <partial name="~/Views/Item/_Resume.cshtml" />
+        </div>
+
+    @* </dialog> *@
 
 <script>
 
@@ -54,12 +99,90 @@
     }
 
 
-    function teste(id) 
+    function openModal(id, price, thumb, description) 
     {
-        console.log(id);
-        console.log('funciona');
+        let modal = document.getElementById("item-modal");
+        let img = document.getElementById("modal-img");
+        let inputItemId = id;
+        let obs = document.getElementById("observations");
+
+        let table = document.getElementById("tableId").value;
+
+        let desc = document.getElementById("modal-description");
+        let quantity = document.getElementById("modal-quantity")
+
+        img.src = `/img/${thumb}`;
+
+        quantity.value = 1;
+        desc.innerText = description;
+        obs.value = null;
+
+        modal.showModal();
+    }
+
+    function closeModal() 
+    {
+        let modal = document.getElementById("item-modal");
+
+        modal.close();
+    }
+
+    function changeModalQuantity(type) 
+    {
+        let quantity = document.getElementById("modal-quantity")
+        let value = quantity.value;
+
+        if (type == 'add') 
+        {
+            value++;
+            quantity.value = value;
+        }
+
+        if (type == 'subtract') 
+        {
+            if (value > 1) {
+                value--;
+                quantity.value = value;
+            }
+        }
+
+    }
 
 
+    async function adicionarPedido() 
+    {
+        const url = '/Item/AddItem';
+        
+        let item = document.getElementById("itemId").value;
+        const qnt = document.getElementById("modal-quantity").value;
+        const obs = document.getElementById("observations").value;
+
+        const container = document.getElementById("resume-container");
+
+        let modal = document.getElementById("item-modal");
+
+        console.log(item, qnt, obs);
+
+        try {
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({ itemId: item, quantity: qnt})
+            });
+
+            if (response.ok) {
+                console.log(response)
+
+                const html = await response.text();
+                container.innerHTML = html;
+
+                modal.close();
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    
     }
 
 

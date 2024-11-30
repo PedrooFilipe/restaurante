@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using shop.web.Entities;
 using shop.web.Interfaces;
+using shop.web.ModelView;
 
 namespace shop.web.Controllers;
 
@@ -38,10 +39,12 @@ public class ItemController : Controller
 
     public async Task<IActionResult> ListAsync(string description)
     {
-        var items = await GetInRepository(description);
+        AddItemToTableViewModel model = new AddItemToTableViewModel();
 
+        model.TableId = 1;
+        model.Items = await GetInRepository(description);
 
-        return View(items);
+        return View(model);
     }
 
     public async Task<IActionResult> ListPartial(string description)
@@ -59,6 +62,26 @@ public class ItemController : Controller
     public IActionResult ChangeStatus() 
     {
         return Ok();
+    }
+
+    public IActionResult AddItem(OrderItemViewModel model)
+    {
+        List<OrderItemViewModel> pedidos = (List<OrderItemViewModel>) ViewData["orders"];
+
+        if(pedidos == null) {
+            pedidos = new List<OrderItemViewModel>();
+        }
+
+        pedidos.Add(new OrderItemViewModel
+        {
+            ItemId = model.ItemId,
+            Quantity = model.Quantity,
+            Observations = model.Observations,
+        });
+
+        ViewData["orders"] = pedidos;
+
+        return PartialView("_Resume");
     }
 
 }

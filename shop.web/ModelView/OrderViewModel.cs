@@ -8,7 +8,7 @@ public class OrderViewModel
     
     public int Quantity {get; set;}
 
-    public int TotalAmount {get; set;}
+    public int TableId { get; set;}
 
     public string Observations {get; set;}
 
