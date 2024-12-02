@@ -13,4 +13,8 @@ public class Context : DbContext
 
     public DbSet<Item> Items {get; set;}
 
+    public DbSet<Table> Tables {get; set;}
+
+    public DbSet<TableBill> TableBills {get; set;}
+
 }

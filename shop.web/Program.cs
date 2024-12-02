@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using shop.web;
+using shop.web.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,9 @@ builder.Services.AddControllersWithViews();
 string connection = builder.Configuration.GetConnectionString("mySql");
 
 builder.Services.AddDbContext<Context>(opt => opt.UseMySql(connection, ServerVersion.AutoDetect(connection)));
-builder.Services.AddScoped<ItemRepository, ItemRepository>();
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<ITableRepository, TableRespository>();
+builder.Services.AddScoped<ITableBillRepository, TableBillRespository>();
 
 var app = builder.Build();
 

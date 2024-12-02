@@ -1,0 +1,64 @@
+﻿@using shop.web.Entities
+@using shop.web.ModelView
+@model List<Table>;
+@{
+    ViewData["Title"] = "Mesas";
+}
+
+@{
+    if (Model == null || Model.Count == 0)
+    {
+                            <div>Nenhuma mesa cadastrada. </div>
+    }
+    else
+    {
+        foreach (Table item in Model)
+        {
+            <div class="flex flex-column hover:cursor-pointer bg-slate-300 justify-center items-center w-full h-[100px] rounded-md pb-2 md:w-[30%] lg:w-[15%]" onclick="selectTable(@item.Id)">
+
+                    <div>
+                        @item.Name
+                    </div>
+
+                    <div>
+                        @item.TableStatus.ToString()
+                    </div>
+
+                <div class="hidden" id="check-@item.Id">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                    </svg>
+                </div>
+            </div>
+        }
+
+    }
+
+<script>
+
+    let selectedItems = [];
+
+
+    function selectTable(id) 
+    {
+        selectedBox = document.getElementById(`check-${id}`)
+
+        if (selectedItems.includes(id)) {
+            selectedBox.classList.add("hidden");
+            selectedItems = selectedItems.filter(item => item !== id)
+        } else 
+        {
+            selectedItems.push(id);
+            selectedBox.classList.remove("hidden");
+        }
+
+        if (selectedItems.length > 0) 
+        {
+
+
+
+        }
+    }
+
+</script>
+}
